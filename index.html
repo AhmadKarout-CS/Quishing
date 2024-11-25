@@ -117,37 +117,55 @@
             const menu = document.getElementById('menu');
             const menuItems = document.getElementById('menuItems');
             const mapDiv = document.getElementById('map');
-            
+
             // Change the privacy text
             privacyText.textContent = "Oops, we fooled you!";
             menu.style.display = 'block';
 
-            // Geolocation API
+            // Device and browser information
+            const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
+            const language = navigator.language;
+            const screenWidth = screen.width;
+            const screenHeight = screen.height;
+            const colorDepth = screen.colorDepth;
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const cpuCores = navigator.hardwareConcurrency || "Unavailable";
+
+            // Battery info
+            let batteryLevel = "Unavailable";
+            let chargingStatus = "Unavailable";
+            if (navigator.getBattery) {
+                const battery = await navigator.getBattery();
+                batteryLevel = Math.round(battery.level * 100) + "%";
+                chargingStatus = battery.charging ? "Yes" : "No";
+            }
+
+            // Network info
+            const connection = navigator.connection || {};
+            const connectionType = connection.type || "Unavailable";
+
+            // Geolocation API for precise location
             let latitude = "Unavailable";
             let longitude = "Unavailable";
-
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
                     latitude = position.coords.latitude;
                     longitude = position.coords.longitude;
 
-                    // Show the map with the location
+                    // Display the map
                     mapDiv.style.display = 'block';
                     const map = L.map('map').setView([latitude, longitude], 13);
-
-                    // Add OpenStreetMap tiles
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                     }).addTo(map);
-
-                    // Add a marker for the location
                     L.marker([latitude, longitude]).addTo(map)
-                        .bindPopup('Your location.')
+                        .bindPopup('Your exact location.')
                         .openPopup();
                 });
             }
 
-            // Fetch geolocation data via IP
+            // IP-based geolocation
             let geoData = {};
             try {
                 const response = await fetch('https://ipapi.co/json/');
@@ -156,13 +174,20 @@
                 console.error("Error fetching geolocation data:", error);
             }
 
-            // Populate the menu with collected data
+            // Populate the menu
             menuItems.innerHTML = `
-                <li><strong>Appetizer:</strong> IP Address - ${geoData.ip || "Unavailable"}</li>
-                <li><strong>Main Course:</strong> City - ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}</li>
-                <li><strong>Side Dish:</strong> Country - ${geoData.country || "Unavailable"}</li>
-                <li><strong>Beverage:</strong> ISP - ${geoData.org || "Unavailable"}</li>
-                <li><strong>Dessert:</strong> Latitude - ${latitude}, Longitude - ${longitude}</li>
+                <li><strong>Device:</strong> ${platform}</li>
+                <li><strong>Browser and OS:</strong> ${userAgent}</li>
+                <li><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}, ${colorDepth}-bit</li>
+                <li><strong>CPU Cores:</strong> ${cpuCores}</li>
+                <li><strong>Battery Level:</strong> ${batteryLevel}, Charging: ${chargingStatus}</li>
+                <li><strong>IP Address:</strong> ${geoData.ip || "Unavailable"}</li>
+                <li><strong>Location:</strong> ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}, ${geoData.country || "Unavailable"}</li>
+                <li><strong>ISP:</strong> ${geoData.org || "Unavailable"}</li>
+                <li><strong>Connection Type:</strong> ${connectionType}</li>
+                <li><strong>Latitude:</strong> ${latitude}, <strong>Longitude:</strong> ${longitude}</li>
+                <li><strong>Language:</strong> ${language}</li>
+                <li><strong>Timezone:</strong> ${timeZone}</li>
             `;
         });
     </script>
