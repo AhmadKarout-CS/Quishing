@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Collection Demo</title>
+    <title>Data Dish Restaurant</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            background-color: #fdf5e6;
             margin: 0;
             padding: 0;
             display: flex;
@@ -16,19 +16,24 @@
             height: 100vh;
         }
         .container {
-            background: white;
+            background: #fff8dc;
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             text-align: center;
-            width: 500px;
+            width: 600px;
         }
         h1 {
-            color: #d9534f;
+            color: #b22222;
             margin-bottom: 10px;
         }
+        .slogan {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 20px;
+        }
         button {
-            background-color: #d9534f;
+            background-color: #b22222;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -37,15 +42,15 @@
             font-size: 16px;
         }
         button:hover {
-            background-color: #b43d3b;
+            background-color: #8b0000;
         }
         .results {
             margin-top: 20px;
             text-align: left;
-            background: #fdf1ed;
+            background: #fffaf0;
             padding: 15px;
             border-radius: 5px;
-            border: 1px solid #f8d2c8;
+            border: 1px solid #f4a460;
         }
         .warning {
             margin-top: 20px;
@@ -56,12 +61,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>Data Collection Demo</h1>
-        <p>Click the button below to see what data can be collected from your browser.</p>
-        <button id="collectData">Collect My Data</button>
+        <h1>Welcome to Data Dish Restaurant</h1>
+        <p class="slogan">"Serving a Platter of Your Information!"</p>
+        <p>Click the button below to view your personalized "menu".</p>
+        <button id="collectData">View My Menu</button>
         <div id="results" class="results" style="display: none;"></div>
         <p id="warning" class="warning" style="display: none;">
-            <strong>Warning:</strong> This demonstration shows how untrusted websites can collect your data without your knowledge.
+            <strong>Warning:</strong> This demonstration shows how much information websites can collect from your device.
         </p>
     </div>
 
@@ -70,13 +76,14 @@
             const resultsDiv = document.getElementById('results');
             resultsDiv.style.display = 'block';
 
-            // Device and browser information
+            // Collect device and browser info
             const userAgent = navigator.userAgent;
             const platform = navigator.platform;
             const language = navigator.language;
             const screenWidth = screen.width;
             const screenHeight = screen.height;
             const colorDepth = screen.colorDepth;
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
             // Battery info
             let batteryLevel = "Unavailable";
@@ -96,22 +103,19 @@
                 console.error("Error fetching IP details:", error);
             }
 
-            // Simulate cookie data
-            document.cookie = "email=user@example.com";
-            const cookies = document.cookie.split(";").reduce((acc, cookie) => {
-                const [key, value] = cookie.split("=");
-                acc[key.trim()] = value;
-                return acc;
-            }, {});
+            // Network information
+            const connection = navigator.connection || {};
+            const connectionType = connection.type || "Unavailable";
 
             // Display collected data
             resultsDiv.innerHTML = `
-                <h2>Collected Data</h2>
+                <h2>Your Data Dish</h2>
                 <p><strong>Browser and OS:</strong> ${userAgent}</p>
                 <p><strong>Platform:</strong> ${platform}</p>
                 <p><strong>Language:</strong> ${language}</p>
                 <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
                 <p><strong>Color Depth:</strong> ${colorDepth}-bit</p>
+                <p><strong>Timezone:</strong> ${timeZone}</p>
                 <p><strong>Battery Level:</strong> ${batteryLevel}</p>
                 <p><strong>Charging:</strong> ${chargingStatus}</p>
                 <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
@@ -119,7 +123,7 @@
                 <p><strong>Region:</strong> ${ipData.region || "Unavailable"}</p>
                 <p><strong>Country:</strong> ${ipData.country || "Unavailable"}</p>
                 <p><strong>ISP:</strong> ${ipData.org || "Unavailable"}</p>
-                <p><strong>Cookie Email:</strong> ${cookies.email || "Unavailable"}</p>
+                <p><strong>Connection Type:</strong> ${connectionType}</p>
             `;
 
             // Display warning
