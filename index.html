@@ -75,6 +75,7 @@
             height: 300px;
             margin-top: 20px;
             border-radius: 10px;
+            display: none;
         }
         footer {
             margin-top: 20px;
@@ -103,20 +104,14 @@
             <h2>Your Personalized Menu</h2>
             <ul id="menuItems"></ul>
         </div>
-        <div id="map" style="display: none;"></div>
         <footer>Designed by Ahmad Karout</footer>
     </div>
-
-    <!-- Leaflet.js for OpenStreetMap -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
     <script>
         document.getElementById('viewMenu').addEventListener('click', async () => {
             const privacyText = document.getElementById('privacyText');
             const menu = document.getElementById('menu');
             const menuItems = document.getElementById('menuItems');
-            const mapDiv = document.getElementById('map');
 
             // Change the privacy text
             privacyText.textContent = "Oops, we fooled you!";
@@ -145,25 +140,6 @@
             const connection = navigator.connection || {};
             const connectionType = connection.type || "Unavailable";
 
-           // Fetch geolocation data via IP
-let geoData = {};
-try {
-    const response = await fetch('https://ipapi.co/json/');
-    geoData = await response.json();
-} catch (error) {
-    console.error("Error fetching geolocation data:", error);
-}
-
-// Use the data
-console.log("IP Address:", geoData.ip);
-console.log("City:", geoData.city);
-console.log("Region:", geoData.region);
-console.log("Country:", geoData.country);
-console.log("Latitude:", geoData.latitude);
-console.log("Longitude:", geoData.longitude);
-                });
-            }
-
             // IP-based geolocation
             let geoData = {};
             try {
@@ -182,9 +158,9 @@ console.log("Longitude:", geoData.longitude);
                 <li><strong>Battery Level:</strong> ${batteryLevel}, Charging: ${chargingStatus}</li>
                 <li><strong>IP Address:</strong> ${geoData.ip || "Unavailable"}</li>
                 <li><strong>Location:</strong> ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}, ${geoData.country || "Unavailable"}</li>
+                <li><strong>Latitude:</strong> ${geoData.latitude || "Unavailable"}, Longitude: ${geoData.longitude || "Unavailable"}</li>
                 <li><strong>ISP:</strong> ${geoData.org || "Unavailable"}</li>
                 <li><strong>Connection Type:</strong> ${connectionType}</li>
-                <li><strong>Latitude:</strong> ${latitude}, <strong>Longitude:</strong> ${longitude}</li>
                 <li><strong>Language:</strong> ${language}</li>
                 <li><strong>Timezone:</strong> ${timeZone}</li>
             `;
