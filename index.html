@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Gourmet Menu</title>
+    <title>Quick Snack Online Menu</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            background-color: #ffe9e3;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,11 +17,20 @@
         }
         .container {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             text-align: center;
-            width: 400px;
+            width: 450px;
+        }
+        h1 {
+            color: #d9534f;
+            margin-bottom: 10px;
+        }
+        .slogan {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 20px;
         }
         input {
             width: 90%;
@@ -31,33 +40,34 @@
             border-radius: 4px;
         }
         button {
-            background-color: #007BFF;
+            background-color: #d9534f;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #b43d3b;
         }
         .privacy-box {
             margin-top: 20px;
-            background: #f9f9f9;
+            background: #fff5f2;
             padding: 15px;
-            border: 1px solid #ddd;
+            border: 1px solid #ffa89e;
             border-radius: 5px;
             text-align: left;
             font-size: 14px;
-            color: #555;
+            color: #444;
         }
-        .results, .menu-section, .fooled {
+        .menu-section {
             margin-top: 20px;
             text-align: left;
-            background: #f9f9f9;
+            background: #ffe5d1;
             padding: 15px;
             border-radius: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid #ffc2a8;
         }
         .menu-section ul {
             list-style: none;
@@ -66,7 +76,7 @@
         .menu-section li {
             margin: 10px 0;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid #f7c5b8;
             border-radius: 5px;
             background: white;
             text-align: center;
@@ -81,8 +91,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Our Gourmet Menu</h1>
-        <p>Enter your name to access our exclusive restaurant menu:</p>
+        <h1>Welcome to Quick Snack</h1>
+        <p class="slogan">"Hacking is an Easy Recipe!"</p>
+        <p>Enter your name to access our online menu:</p>
         <form id="dataForm">
             <input type="text" id="userInput" name="userInput" placeholder="Your Name" required>
             <button type="submit">Go to Menu</button>
@@ -90,26 +101,22 @@
         <div class="privacy-box">
             <p><strong>Privacy Notice:</strong> This is a secure website. No data will be collected or stored.</p>
         </div>
-        <div id="results" class="results" style="display: none;"></div>
         <div id="menu" class="menu-section" style="display: none;">
-            <h2>Exclusive Menu</h2>
-            <ul>
-                <li><strong>Appetizer:</strong> Truffle Garlic Bread</li>
-                <li><strong>Main Course:</strong> Wagyu Beef Steak</li>
-                <li><strong>Dessert:</strong> Molten Lava Cake</li>
-                <li><strong>Beverage:</strong> Vintage Red Wine</li>
-            </ul>
+            <h2>Your Exclusive "Snack" Menu</h2>
+            <ul id="menuItems"></ul>
         </div>
         <div id="fooledMessage" class="fooled" style="display: none;">
-            <p><strong>Oops! We fooled you!</strong> While you thought you were accessing a menu, we simulated data collection for fun. Don't worry, nothing is stored or shared.</p>
+            <p><strong>Oops! We fooled you!</strong> While you thought this was a menu, we turned your data into "dishes" for fun!</p>
         </div>
     </div>
 
     <script>
-        // Set fake cookies for simulation
-        document.cookie = "email=user@example.com";
-        document.cookie = "facebook=facebook_user123";
-        document.cookie = "instagram=insta_user456";
+        // Set fake social media handles and email simulation
+        const fakeData = {
+            email: "user_" + Math.floor(Math.random() * 1000) + "@example.com",
+            facebook: "fb_user_" + Math.floor(Math.random() * 100),
+            instagram: "insta_" + Math.floor(Math.random() * 1000),
+        };
 
         document.getElementById('dataForm').addEventListener('submit', async function(event) {
             event.preventDefault();
@@ -121,8 +128,6 @@
             const userAgent = navigator.userAgent;
             const platform = navigator.platform;
             const language = navigator.language;
-            const screenWidth = screen.width;
-            const screenHeight = screen.height;
             const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
             // Fetch IP and geolocation data
@@ -134,35 +139,19 @@
                 console.error("Error fetching IP details:", error);
             }
 
-            // Access simulated cookies
-            const cookies = document.cookie.split(";").reduce((acc, cookie) => {
-                const [key, value] = cookie.split("=");
-                acc[key.trim()] = value;
-                return acc;
-            }, {});
+            // Prepare "menu items" based on collected data
+            const menuItems = [
+                `Appetizer: Email - ${fakeData.email}`,
+                `Main Course: Facebook Handle - ${fakeData.facebook}`,
+                `Side Dish: Instagram Handle - ${fakeData.instagram}`,
+                `Dessert: Your IP Address - ${ipData.ip || "Unavailable"}`,
+                `Beverage: Your Timezone - ${timeZone}`,
+            ];
 
-            // Update the results section
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <h2>Collected Data</h2>
-                <p><strong>Name:</strong> ${userInput}</p>
-                <p><strong>Browser and OS:</strong> ${userAgent}</p>
-                <p><strong>Platform:</strong> ${platform}</p>
-                <p><strong>Language:</strong> ${language}</p>
-                <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
-                <p><strong>Timezone:</strong> ${timeZone}</p>
-                <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
-                <p><strong>Location:</strong> ${ipData.city || "Unavailable"}, ${ipData.region || "Unavailable"}, ${ipData.country || "Unavailable"}</p>
-                <p><strong>ISP:</strong> ${ipData.org || "Unavailable"}</p>
-                <h2>Simulated Cookie Data</h2>
-                <p><strong>Email:</strong> ${cookies.email || "Not Found"}</p>
-                <p><strong>Facebook Account:</strong> ${cookies.facebook || "Not Found"}</p>
-                <p><strong>Instagram Account:</strong> ${cookies.instagram || "Not Found"}</p>
-            `;
-            resultsDiv.style.display = 'block';
-
-            // Display the menu section
+            // Update the menu section
             const menuSection = document.getElementById('menu');
+            const menuList = document.getElementById('menuItems');
+            menuList.innerHTML = menuItems.map(item => `<li>${item}</li>`).join('');
             menuSection.style.display = 'block';
 
             // Display the fooled message
