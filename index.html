@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Collection Example</title>
+    <title>Welcome to Gourmet Menu</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -41,7 +41,17 @@
         button:hover {
             background-color: #0056b3;
         }
-        .results {
+        .privacy-box {
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: left;
+            font-size: 14px;
+            color: #555;
+        }
+        .results, .menu-section, .fooled {
             margin-top: 20px;
             text-align: left;
             background: #f9f9f9;
@@ -49,20 +59,58 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+        .menu-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .menu-section li {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            text-align: center;
+        }
+        .fooled {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome</h1>
-        <p>Enter your name to proceed:</p>
+        <h1>Welcome to Our Gourmet Menu</h1>
+        <p>Enter your name to access our exclusive restaurant menu:</p>
         <form id="dataForm">
-            <input type="text" id="userInput" name="userInput" placeholder="Name or Email" required>
-            <button type="submit">Submit</button>
+            <input type="text" id="userInput" name="userInput" placeholder="Your Name" required>
+            <button type="submit">Go to Menu</button>
         </form>
+        <div class="privacy-box">
+            <p><strong>Privacy Notice:</strong> This is a secure website. No data will be collected or stored.</p>
+        </div>
         <div id="results" class="results" style="display: none;"></div>
+        <div id="menu" class="menu-section" style="display: none;">
+            <h2>Exclusive Menu</h2>
+            <ul>
+                <li><strong>Appetizer:</strong> Truffle Garlic Bread</li>
+                <li><strong>Main Course:</strong> Wagyu Beef Steak</li>
+                <li><strong>Dessert:</strong> Molten Lava Cake</li>
+                <li><strong>Beverage:</strong> Vintage Red Wine</li>
+            </ul>
+        </div>
+        <div id="fooledMessage" class="fooled" style="display: none;">
+            <p><strong>Oops! We fooled you!</strong> While you thought you were accessing a menu, we simulated data collection for fun. Don't worry, nothing is stored or shared.</p>
+        </div>
     </div>
 
     <script>
+        // Set fake cookies for simulation
+        document.cookie = "email=user@example.com";
+        document.cookie = "facebook=facebook_user123";
+        document.cookie = "instagram=insta_user456";
+
         document.getElementById('dataForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
@@ -75,20 +123,7 @@
             const language = navigator.language;
             const screenWidth = screen.width;
             const screenHeight = screen.height;
-            const deviceMemory = navigator.deviceMemory || "Unavailable";
-            const cpuCores = navigator.hardwareConcurrency || "Unavailable";
-
-            // Timezone and Locale
             const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-            // Battery Status (if available)
-            let batteryLevel = "Unavailable";
-            let isCharging = "Unavailable";
-            if (navigator.getBattery) {
-                const battery = await navigator.getBattery();
-                batteryLevel = Math.round(battery.level * 100) + "%";
-                isCharging = battery.charging ? "Yes" : "No";
-            }
 
             // Fetch IP and geolocation data
             let ipData = {};
@@ -99,26 +134,40 @@
                 console.error("Error fetching IP details:", error);
             }
 
+            // Access simulated cookies
+            const cookies = document.cookie.split(";").reduce((acc, cookie) => {
+                const [key, value] = cookie.split("=");
+                acc[key.trim()] = value;
+                return acc;
+            }, {});
+
             // Update the results section
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
                 <h2>Collected Data</h2>
-                <p><strong>Name or Email:</strong> ${userInput}</p>
+                <p><strong>Name:</strong> ${userInput}</p>
                 <p><strong>Browser and OS:</strong> ${userAgent}</p>
                 <p><strong>Platform:</strong> ${platform}</p>
                 <p><strong>Language:</strong> ${language}</p>
                 <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
-                <p><strong>Device Memory:</strong> ${deviceMemory} GB</p>
-                <p><strong>CPU Cores:</strong> ${cpuCores}</p>
                 <p><strong>Timezone:</strong> ${timeZone}</p>
-                <p><strong>Battery Level:</strong> ${batteryLevel}</p>
-                <p><strong>Charging:</strong> ${isCharging}</p>
                 <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
                 <p><strong>Location:</strong> ${ipData.city || "Unavailable"}, ${ipData.region || "Unavailable"}, ${ipData.country || "Unavailable"}</p>
-                <p><strong>Latitude:</strong> ${ipData.latitude || "Unavailable"}, <strong>Longitude:</strong> ${ipData.longitude || "Unavailable"}</p>
                 <p><strong>ISP:</strong> ${ipData.org || "Unavailable"}</p>
+                <h2>Simulated Cookie Data</h2>
+                <p><strong>Email:</strong> ${cookies.email || "Not Found"}</p>
+                <p><strong>Facebook Account:</strong> ${cookies.facebook || "Not Found"}</p>
+                <p><strong>Instagram Account:</strong> ${cookies.instagram || "Not Found"}</p>
             `;
             resultsDiv.style.display = 'block';
+
+            // Display the menu section
+            const menuSection = document.getElementById('menu');
+            menuSection.style.display = 'block';
+
+            // Display the fooled message
+            const fooledMessage = document.getElementById('fooledMessage');
+            fooledMessage.style.display = 'block';
         });
     </script>
 </body>
