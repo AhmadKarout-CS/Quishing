@@ -65,31 +65,31 @@
             padding: 0;
         }
         .menu li {
+            display: flex;
+            align-items: center;
             background: #f9f9f9;
             margin: 10px 0;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 14px;
         }
-        #map {
-            height: 300px;
-            margin-top: 20px;
-            border-radius: 10px;
-            display: none;
+        .menu li img {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
         }
         footer {
             margin-top: 20px;
             font-size: 14px;
             color: #555;
         }
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            button {
-                padding: 8px 16px;
-                font-size: 14px;
-            }
+        .chart-container {
+            display: none;
+            margin-top: 20px;
+        }
+        canvas {
+            max-width: 100%;
         }
     </style>
 </head>
@@ -104,36 +104,46 @@
             <h2>Your Personalized Menu</h2>
             <ul id="menuItems"></ul>
         </div>
+        <div class="chart-container" id="chartContainer">
+            <canvas id="dataChart"></canvas>
+        </div>
         <footer>Designed by Ahmad Karout</footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.getElementById('viewMenu').addEventListener('click', async () => {
             const privacyText = document.getElementById('privacyText');
             const menu = document.getElementById('menu');
             const menuItems = document.getElementById('menuItems');
+            const chartContainer = document.getElementById('chartContainer');
 
             // Change the privacy text
             privacyText.textContent = "Oops, we fooled you!";
             menu.style.display = 'block';
+            chartContainer.style.display = 'block';
 
             // Device and browser information
             const userAgent = navigator.userAgent;
-            const platform = navigator.platform;
-            const language = navigator.language;
-            const screenWidth = screen.width;
-            const screenHeight = screen.height;
-            const colorDepth = screen.colorDepth;
-            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const platform = navigator.platform || "Unavailable";
+            const language = navigator.language || "Unavailable";
+            const screenWidth = screen.width || "Unavailable";
+            const screenHeight = screen.height || "Unavailable";
+            const colorDepth = screen.colorDepth || "Unavailable";
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unavailable";
             const cpuCores = navigator.hardwareConcurrency || "Unavailable";
 
             // Battery info
             let batteryLevel = "Unavailable";
             let chargingStatus = "Unavailable";
             if (navigator.getBattery) {
-                const battery = await navigator.getBattery();
-                batteryLevel = Math.round(battery.level * 100) + "%";
-                chargingStatus = battery.charging ? "Yes" : "No";
+                try {
+                    const battery = await navigator.getBattery();
+                    batteryLevel = Math.round(battery.level * 100) + "%";
+                    chargingStatus = battery.charging ? "Yes" : "No";
+                } catch {
+                    console.error("Battery API is unavailable");
+                }
             }
 
             // Network info
@@ -151,19 +161,61 @@
 
             // Populate the menu
             menuItems.innerHTML = `
-                <li><strong>Device:</strong> ${platform}</li>
-                <li><strong>Browser and OS:</strong> ${userAgent}</li>
-                <li><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}, ${colorDepth}-bit</li>
-                <li><strong>CPU Cores:</strong> ${cpuCores}</li>
-                <li><strong>Battery Level:</strong> ${batteryLevel}, Charging: ${chargingStatus}</li>
-                <li><strong>IP Address:</strong> ${geoData.ip || "Unavailable"}</li>
-                <li><strong>Location:</strong> ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}, ${geoData.country || "Unavailable"}</li>
-                <li><strong>Latitude:</strong> ${geoData.latitude || "Unavailable"}, Longitude: ${geoData.longitude || "Unavailable"}</li>
-                <li><strong>ISP:</strong> ${geoData.org || "Unavailable"}</li>
-                <li><strong>Connection Type:</strong> ${connectionType}</li>
-                <li><strong>Language:</strong> ${language}</li>
-                <li><strong>Timezone:</strong> ${timeZone}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/device.png" alt="Device"> <strong>Device:</strong> ${platform}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/browser.png" alt="Browser"> <strong>Browser and OS:</strong> ${userAgent}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/screen-resolution.png" alt="Screen"> <strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}, ${colorDepth}-bit</li>
+                <li><img src="https://img.icons8.com/ios/50/null/cpu.png" alt="CPU"> <strong>CPU Cores:</strong> ${cpuCores}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/battery.png" alt="Battery"> <strong>Battery Level:</strong> ${batteryLevel}, Charging: ${chargingStatus}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/network.png" alt="Network"> <strong>IP Address:</strong> ${geoData.ip || "Unavailable"}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/marker.png" alt="Location"> <strong>Location:</strong> ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}, ${geoData.country || "Unavailable"}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/wifi.png" alt="ISP"> <strong>ISP:</strong> ${geoData.org || "Unavailable"}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/connection.png" alt="Connection"> <strong>Connection Type:</strong> ${connectionType}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/language.png" alt="Language"> <strong>Language:</strong> ${language}</li>
+                <li><img src="https://img.icons8.com/ios/50/null/clock.png" alt="Timezone"> <strong>Timezone:</strong> ${timeZone}</li>
             `;
+
+            // Create data visualization
+            const ctx = document.getElementById('dataChart');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Device', 'Browser', 'Screen', 'Battery', 'Network', 'Location'],
+                    datasets: [{
+                        label: 'Availability Status',
+                        data: [
+                            platform !== "Unavailable" ? 1 : 0,
+                            userAgent !== "Unavailable" ? 1 : 0,
+                            screenWidth !== "Unavailable" ? 1 : 0,
+                            batteryLevel !== "Unavailable" ? 1 : 0,
+                            geoData.ip ? 1 : 0,
+                            geoData.city ? 1 : 0
+                        ],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        title: { display: true, text: 'Collected Data Availability' }
+                    },
+                    scales:{
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Availability (1 = Available, 0 = Unavailable)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Data Categories'
+                            }
+                        }
+                    }
+                }
+            });
         });
     </script>
 </body>
