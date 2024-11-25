@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Snack Full Data Menu</title>
+    <title>Data Collection Demo</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #fef6e4;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
             display: flex;
@@ -21,26 +21,14 @@
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             text-align: center;
-            width: 450px;
+            width: 500px;
         }
         h1 {
-            color: #ff6f61;
+            color: #d9534f;
             margin-bottom: 10px;
         }
-        .slogan {
-            font-style: italic;
-            color: #555;
-            margin-bottom: 20px;
-        }
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
         button {
-            background-color: #ff6f61;
+            background-color: #d9534f;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -49,109 +37,94 @@
             font-size: 16px;
         }
         button:hover {
-            background-color: #e85a4f;
-        }
-        .privacy-box {
-            margin-top: 20px;
-            background: #fdf1ed;
-            padding: 15px;
-            border: 1px solid #f8d2c8;
-            border-radius: 5px;
-            text-align: left;
-            font-size: 14px;
-            color: #444;
+            background-color: #b43d3b;
         }
         .results {
             margin-top: 20px;
             text-align: left;
-            background: #fff7f4;
+            background: #fdf1ed;
             padding: 15px;
             border-radius: 5px;
             border: 1px solid #f8d2c8;
+        }
+        .warning {
+            margin-top: 20px;
+            font-size: 14px;
+            color: red;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Quick Snack Online Menu</h1>
-        <p class="slogan">"Hacking is an Easy Recipe!"</p>
-        <p>Enter your name to access our online menu:</p>
-        <form id="dataForm">
-            <input type="text" id="userInput" name="userInput" placeholder="Your Name" required>
-            <button type="submit">Go to Menu</button>
-        </form>
-        <div class="privacy-box">
-            <p><strong>Privacy Notice:</strong> This is a secure website. No data will be collected or stored.</p>
-        </div>
+        <h1>Data Collection Demo</h1>
+        <p>Click the button below to see what data can be collected from your browser.</p>
+        <button id="collectData">Collect My Data</button>
         <div id="results" class="results" style="display: none;"></div>
+        <p id="warning" class="warning" style="display: none;">
+            <strong>Warning:</strong> This demonstration shows how untrusted websites can collect your data without your knowledge.
+        </p>
     </div>
 
     <script>
-        document.getElementById('dataForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
+        document.getElementById('collectData').addEventListener('click', async () => {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.style.display = 'block';
 
-            // Get user input
-            const userInput = document.getElementById('userInput').value;
-
-            // Collect device and browser info
+            // Device and browser information
             const userAgent = navigator.userAgent;
             const platform = navigator.platform;
             const language = navigator.language;
             const screenWidth = screen.width;
             const screenHeight = screen.height;
             const colorDepth = screen.colorDepth;
-            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
             // Battery info
-            let batteryInfo = {};
+            let batteryLevel = "Unavailable";
+            let chargingStatus = "Unavailable";
             if (navigator.getBattery) {
                 const battery = await navigator.getBattery();
-                batteryInfo.level = Math.round(battery.level * 100) + "%";
-                batteryInfo.charging = battery.charging ? "Yes" : "No";
-            } else {
-                batteryInfo.level = "Unavailable";
-                batteryInfo.charging = "Unavailable";
+                batteryLevel = Math.round(battery.level * 100) + "%";
+                chargingStatus = battery.charging ? "Yes" : "No";
             }
 
             // Fetch IP and geolocation data
             let ipData = {};
             try {
-                const response = await fetch('https://ipapi.co/json/'); // Public IP and location API
+                const response = await fetch('https://ipapi.co/json/');
                 ipData = await response.json();
             } catch (error) {
                 console.error("Error fetching IP details:", error);
             }
 
-            // Simulated cookies for email/social handles
-            const cookies = {
-                email: "user@example.com",
-                facebook: "fb_user123",
-                instagram: "insta_user456",
-            };
+            // Simulate cookie data
+            document.cookie = "email=user@example.com";
+            const cookies = document.cookie.split(";").reduce((acc, cookie) => {
+                const [key, value] = cookie.split("=");
+                acc[key.trim()] = value;
+                return acc;
+            }, {});
 
-            // Display all collected data
-            const resultsDiv = document.getElementById('results');
+            // Display collected data
             resultsDiv.innerHTML = `
                 <h2>Collected Data</h2>
-                <p><strong>Name:</strong> ${userInput}</p>
                 <p><strong>Browser and OS:</strong> ${userAgent}</p>
                 <p><strong>Platform:</strong> ${platform}</p>
                 <p><strong>Language:</strong> ${language}</p>
                 <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
                 <p><strong>Color Depth:</strong> ${colorDepth}-bit</p>
-                <p><strong>Timezone:</strong> ${timeZone}</p>
-                <p><strong>Battery Level:</strong> ${batteryInfo.level}</p>
-                <p><strong>Charging:</strong> ${batteryInfo.charging}</p>
+                <p><strong>Battery Level:</strong> ${batteryLevel}</p>
+                <p><strong>Charging:</strong> ${chargingStatus}</p>
                 <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
                 <p><strong>City:</strong> ${ipData.city || "Unavailable"}</p>
                 <p><strong>Region:</strong> ${ipData.region || "Unavailable"}</p>
                 <p><strong>Country:</strong> ${ipData.country || "Unavailable"}</p>
                 <p><strong>ISP:</strong> ${ipData.org || "Unavailable"}</p>
-                <p><strong>Email:</strong> ${cookies.email}</p>
-                <p><strong>Facebook Handle:</strong> ${cookies.facebook}</p>
-                <p><strong>Instagram Handle:</strong> ${cookies.instagram}</p>
+                <p><strong>Cookie Email:</strong> ${cookies.email || "Unavailable"}</p>
             `;
-            resultsDiv.style.display = 'block';
+
+            // Display warning
+            const warningDiv = document.getElementById('warning');
+            warningDiv.style.display = 'block';
         });
     </script>
 </body>
