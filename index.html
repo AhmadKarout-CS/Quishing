@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collecting Device Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome</h1>
+        <p>Enter your name or email to proceed:</p>
+        <form id="dataForm">
+            <input type="text" id="userInput" name="userInput" placeholder="Name or Email" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('dataForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Get the user input
+            const userInput = document.getElementById('userInput').value;
+
+            // Collect device and browser information
+            const userAgent = navigator.userAgent; // Browser and OS information
+            const platform = navigator.platform; // Operating system platform
+            const language = navigator.language; // User's language
+            const screenWidth = screen.width; // Screen width
+            const screenHeight = screen.height; // Screen height
+
+            // Fetch IP and location details using an external API
+            let ipData = {};
+            try {
+                const response = await fetch('https://ipapi.co/json/'); // IP and location API
+                ipData = await response.json();
+            } catch (error) {
+                console.error("Error fetching IP details:", error);
+            }
+
+            // Create a new page to display the collected data
+            const newPage = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Collected Data</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f4f4f4;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                        }
+                        .container {
+                            background: white;
+                            padding: 20px;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                            text-align: left;
+                            width: 400px;
+                        }
+                        h1 {
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h1>Collected Data</h1>
+                        <p><strong>Name or Email:</strong> ${userInput}</p>
+                        <p><strong>Browser and OS:</strong> ${userAgent}</p>
+                        <p><strong>Platform:</strong> ${platform}</p>
+                        <p><strong>Language:</strong> ${language}</p>
+                        <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
+                        <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
+                        <p><strong>Location:</strong> ${ipData.city || "Unavailable"}, ${ipData.region || "Unavailable"}, ${ipData.country || "Unavailable"}</p>
+                        <p><strong>Latitude:</strong> ${ipData.latitude || "Unavailable"}, <strong>Longitude:</strong> ${ipData.longitude || "Unavailable"}</p>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const newWindow = window.open();
+            newWindow.document.write(newPage);
+            newWindow.document.close();
+        });
+    </script>
+</body>
+</html>
