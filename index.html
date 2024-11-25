@@ -21,7 +21,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-align: center;
-            width: 300px;
+            width: 400px;
         }
         input {
             width: 90%;
@@ -41,16 +41,25 @@
         button:hover {
             background-color: #0056b3;
         }
+        .results {
+            margin-top: 20px;
+            text-align: left;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome</h1>
-        <p>Enter your name or email to proceed:</p>
+        <p>Enter your name to proceed:</p>
         <form id="dataForm">
             <input type="text" id="userInput" name="userInput" placeholder="Name or Email" required>
             <button type="submit">Submit</button>
         </form>
+        <div id="results" class="results" style="display: none;"></div>
     </div>
 
     <script>
@@ -90,62 +99,26 @@
                 console.error("Error fetching IP details:", error);
             }
 
-            // Create a new page to display collected data
-            const newPage = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Collected Data</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            background-color: #f4f4f4;
-                            display: flex;
-                            justify-content: center;
-                            align-items: center;
-                            height: 100vh;
-                            margin: 0;
-                        }
-                        .container {
-                            background: white;
-                            padding: 20px;
-                            border-radius: 8px;
-                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                            text-align: left;
-                            width: 400px;
-                        }
-                        h1 {
-                            text-align: center;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1>Collected Data</h1>
-                        <p><strong>Name or Email:</strong> ${userInput}</p>
-                        <p><strong>Browser and OS:</strong> ${userAgent}</p>
-                        <p><strong>Platform:</strong> ${platform}</p>
-                        <p><strong>Language:</strong> ${language}</p>
-                        <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
-                        <p><strong>Device Memory:</strong> ${deviceMemory} GB</p>
-                        <p><strong>CPU Cores:</strong> ${cpuCores}</p>
-                        <p><strong>Timezone:</strong> ${timeZone}</p>
-                        <p><strong>Battery Level:</strong> ${batteryLevel}</p>
-                        <p><strong>Charging:</strong> ${isCharging}</p>
-                        <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
-                        <p><strong>Location:</strong> ${ipData.city || "Unavailable"}, ${ipData.region || "Unavailable"}, ${ipData.country || "Unavailable"}</p>
-                        <p><strong>Latitude:</strong> ${ipData.latitude || "Unavailable"}, <strong>Longitude:</strong> ${ipData.longitude || "Unavailable"}</p>
-                        <p><strong>ISP:</strong> ${ipData.org || "Unavailable"}</p>
-                    </div>
-                </body>
-                </html>
+            // Update the results section
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Collected Data</h2>
+                <p><strong>Name or Email:</strong> ${userInput}</p>
+                <p><strong>Browser and OS:</strong> ${userAgent}</p>
+                <p><strong>Platform:</strong> ${platform}</p>
+                <p><strong>Language:</strong> ${language}</p>
+                <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
+                <p><strong>Device Memory:</strong> ${deviceMemory} GB</p>
+                <p><strong>CPU Cores:</strong> ${cpuCores}</p>
+                <p><strong>Timezone:</strong> ${timeZone}</p>
+                <p><strong>Battery Level:</strong> ${batteryLevel}</p>
+                <p><strong>Charging:</strong> ${isCharging}</p>
+                <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
+                <p><strong>Location:</strong> ${ipData.city || "Unavailable"}, ${ipData.region || "Unavailable"}, ${ipData.country || "Unavailable"}</p>
+                <p><strong>Latitude:</strong> ${ipData.latitude || "Unavailable"}, <strong>Longitude:</strong> ${ipData.longitude || "Unavailable"}</p>
+                <p><strong>ISP:</strong> ${ipData.org || "Unavailable"}</p>
             `;
-
-            const newWindow = window.open();
-            newWindow.document.write(newPage);
-            newWindow.document.close();
+            resultsDiv.style.display = 'block';
         });
     </script>
 </body>
