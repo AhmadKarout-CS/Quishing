@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dish and Chips - Your Best See Fool Restaurant</title>
+    <title>Dish and Chips - SeeFool Restaurant</title>
     <style>
         /* General Styles */
         body {
@@ -25,6 +25,10 @@
             text-align: center;
             width: 90%;
             max-width: 600px;
+        }
+        .logo {
+            width: 100px;
+            margin: 0 auto 20px auto;
         }
         h1 {
             color: #b22222;
@@ -51,6 +55,12 @@
             font-size: 14px;
             color: grey;
         }
+        .oops {
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 15px;
+        }
         .menu {
             display: none;
             margin-top: 20px;
@@ -66,6 +76,7 @@
         }
         .menu li {
             display: flex;
+            justify-content: space-between;
             align-items: center;
             background: #f9f9f9;
             margin: 10px 0;
@@ -79,52 +90,47 @@
             width: 20px;
             height: 20px;
         }
+        .menu li .price {
+            color: #1e90ff;
+            font-weight: bold;
+        }
         footer {
             margin-top: 20px;
             font-size: 14px;
             color: #555;
         }
-        .chart-container {
-            display: none;
-            margin-top: 20px;
-        }
-        canvas {
-            max-width: 100%;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Dish and Chips</h1>
+        <img class="logo" src="https://img.icons8.com/ios/100/seafood.png" alt="Seafood Logo">
+        <h1>Welcome to SeeFool</h1>
         <p class="slogan">"Your Best See Fool Restaurant"</p>
         <p>Click the button below to view our exclusive menu:</p>
         <button id="viewMenu">Go to Menu</button>
         <p class="privacy" id="privacyText">Your privacy is important to us. No data will be collected.</p>
+        <p class="oops" id="oopsMessage" style="display: none;">Oops, we fooled you!</p>
         <div class="menu" id="menu">
             <h2>Your Personalized Menu</h2>
             <ul id="menuItems"></ul>
         </div>
-        <div class="chart-container" id="chartContainer">
-            <canvas id="dataChart"></canvas>
-        </div>
         <footer>Designed by Ahmad Karout</footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.getElementById('viewMenu').addEventListener('click', async () => {
             const privacyText = document.getElementById('privacyText');
+            const oopsMessage = document.getElementById('oopsMessage');
             const menu = document.getElementById('menu');
             const menuItems = document.getElementById('menuItems');
-            const chartContainer = document.getElementById('chartContainer');
 
-            // Change the privacy text
-            privacyText.textContent = "Oops, we fooled you!";
+            // Change the privacy text and display the oops message
+            privacyText.style.display = 'none';
+            oopsMessage.style.display = 'block';
             menu.style.display = 'block';
-            chartContainer.style.display = 'block';
 
             // Device and browser information
-            const userAgent = navigator.userAgent;
+            const userAgent = navigator.userAgent || "Unavailable";
             const platform = navigator.platform || "Unavailable";
             const language = navigator.language || "Unavailable";
             const screenWidth = screen.width || "Unavailable";
@@ -159,63 +165,20 @@
                 console.error("Error fetching geolocation data:", error);
             }
 
-            // Populate the menu
+            // Populate the menu with data and fake prices
             menuItems.innerHTML = `
-                <li><img src="https://img.icons8.com/ios/50/null/device.png" alt="Device"> <strong>Device:</strong> ${platform}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/browser.png" alt="Browser"> <strong>Browser and OS:</strong> ${userAgent}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/screen-resolution.png" alt="Screen"> <strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}, ${colorDepth}-bit</li>
-                <li><img src="https://img.icons8.com/ios/50/null/cpu.png" alt="CPU"> <strong>CPU Cores:</strong> ${cpuCores}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/battery.png" alt="Battery"> <strong>Battery Level:</strong> ${batteryLevel}, Charging: ${chargingStatus}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/network.png" alt="Network"> <strong>IP Address:</strong> ${geoData.ip || "Unavailable"}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/marker.png" alt="Location"> <strong>Location:</strong> ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}, ${geoData.country || "Unavailable"}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/wifi.png" alt="ISP"> <strong>ISP:</strong> ${geoData.org || "Unavailable"}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/connection.png" alt="Connection"> <strong>Connection Type:</strong> ${connectionType}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/language.png" alt="Language"> <strong>Language:</strong> ${language}</li>
-                <li><img src="https://img.icons8.com/ios/50/null/clock.png" alt="Timezone"> <strong>Timezone:</strong> ${timeZone}</li>
+                <li><strong>Device:</strong> ${platform} <span class="price">$19.99</span></li>
+                <li><strong>Browser and OS:</strong> ${userAgent} <span class="price">$29.99</span></li>
+                <li><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}, ${colorDepth}-bit <span class="price">$14.99</span></li>
+                <li><strong>CPU Cores:</strong> ${cpuCores} <span class="price">$12.99</span></li>
+                <li><strong>Battery Level:</strong> ${batteryLevel}, Charging: ${chargingStatus} <span class="price">$9.99</span></li>
+                <li><strong>IP Address:</strong> ${geoData.ip || "Unavailable"} <span class="price">$24.99</span></li>
+                <li><strong>Location:</strong> ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}, ${geoData.country || "Unavailable"} <span class="price">$34.99</span></li>
+                <li><strong>ISP:</strong> ${geoData.org || "Unavailable"} <span class="price">$19.99</span></li>
+                <li><strong>Connection Type:</strong> ${connectionType} <span class="price">$15.99</span></li>
+                <li><strong>Language:</strong> ${language} <span class="price">$5.99</span></li>
+                <li><strong>Timezone:</strong> ${timeZone} <span class="price">$7.99</span></li>
             `;
-
-            // Create data visualization
-            const ctx = document.getElementById('dataChart');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Device', 'Browser', 'Screen', 'Battery', 'Network', 'Location'],
-                    datasets: [{
-                        label: 'Availability Status',
-                        data: [
-                            platform !== "Unavailable" ? 1 : 0,
-                            userAgent !== "Unavailable" ? 1 : 0,
-                            screenWidth !== "Unavailable" ? 1 : 0,
-                            batteryLevel !== "Unavailable" ? 1 : 0,
-                            geoData.ip ? 1 : 0,
-                            geoData.city ? 1 : 0
-                        ],
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true },
-                        title: { display: true, text: 'Collected Data Availability' }
-                    },
-                    scales:{
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Availability (1 = Available, 0 = Unavailable)'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Data Categories'
-                            }
-                        }
-                    }
-                }
-            });
         });
     </script>
 </body>
