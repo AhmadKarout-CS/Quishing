@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dish and Chips - SeeFool Restaurant</title>
+    <title>DataDish - Your Best See Fool Restaurant</title>
     <style>
         /* General Styles */
         body {
@@ -27,8 +27,10 @@
             max-width: 600px;
         }
         .logo {
-            width: 100px;
-            margin: 0 auto 20px auto;
+            font-size: 24px;
+            font-weight: bold;
+            color: #b22222;
+            margin-bottom: 20px;
         }
         h1 {
             color: #b22222;
@@ -85,12 +87,8 @@
             border-radius: 5px;
             font-size: 14px;
         }
-        .menu li img {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
-        }
         .menu li .price {
+            margin-left: 20px;
             color: #1e90ff;
             font-weight: bold;
         }
@@ -103,8 +101,8 @@
 </head>
 <body>
     <div class="container">
-        <img class="logo" src="https://img.icons8.com/ios/100/seafood.png" alt="Seafood Logo">
-        <h1>Welcome to SeeFool</h1>
+        <div class="logo">DataDish</div>
+        <h1>Welcome to DataDish</h1>
         <p class="slogan">"Your Best See Fool Restaurant"</p>
         <p>Click the button below to view our exclusive menu:</p>
         <button id="viewMenu">Go to Menu</button>
@@ -174,6 +172,8 @@
                 <li><strong>Battery Level:</strong> ${batteryLevel}, Charging: ${chargingStatus} <span class="price">$9.99</span></li>
                 <li><strong>IP Address:</strong> ${geoData.ip || "Unavailable"} <span class="price">$24.99</span></li>
                 <li><strong>Location:</strong> ${geoData.city || "Unavailable"}, ${geoData.region || "Unavailable"}, ${geoData.country || "Unavailable"} <span class="price">$34.99</span></li>
+                <li><strong>Latitude:</strong> ${geoData.latitude || "Unavailable"} <span class="price">$8.99</span></li>
+                <li><strong>Longitude:</strong> ${geoData.longitude || "Unavailable"} <span class="price">$8.99</span></li>
                 <li><strong>ISP:</strong> ${geoData.org || "Unavailable"} <span class="price">$19.99</span></li>
                 <li><strong>Connection Type:</strong> ${connectionType} <span class="price">$15.99</span></li>
                 <li><strong>Language:</strong> ${language} <span class="price">$5.99</span></li>
