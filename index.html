@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Snack Online Menu</title>
+    <title>Quick Snack Full Data Menu</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #ffe9e3;
+            background-color: #fef6e4;
             margin: 0;
             padding: 0;
             display: flex;
@@ -24,7 +24,7 @@
             width: 450px;
         }
         h1 {
-            color: #d9534f;
+            color: #ff6f61;
             margin-bottom: 10px;
         }
         .slogan {
@@ -40,7 +40,7 @@
             border-radius: 4px;
         }
         button {
-            background-color: #d9534f;
+            background-color: #ff6f61;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -49,49 +49,31 @@
             font-size: 16px;
         }
         button:hover {
-            background-color: #b43d3b;
+            background-color: #e85a4f;
         }
         .privacy-box {
             margin-top: 20px;
-            background: #fff5f2;
+            background: #fdf1ed;
             padding: 15px;
-            border: 1px solid #ffa89e;
+            border: 1px solid #f8d2c8;
             border-radius: 5px;
             text-align: left;
             font-size: 14px;
             color: #444;
         }
-        .menu-section {
+        .results {
             margin-top: 20px;
             text-align: left;
-            background: #ffe5d1;
+            background: #fff7f4;
             padding: 15px;
             border-radius: 5px;
-            border: 1px solid #ffc2a8;
-        }
-        .menu-section ul {
-            list-style: none;
-            padding: 0;
-        }
-        .menu-section li {
-            margin: 10px 0;
-            padding: 10px;
-            border: 1px solid #f7c5b8;
-            border-radius: 5px;
-            background: white;
-            text-align: center;
-        }
-        .fooled {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 16px;
-            color: red;
+            border: 1px solid #f8d2c8;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to Quick Snack</h1>
+        <h1>Quick Snack Online Menu</h1>
         <p class="slogan">"Hacking is an Easy Recipe!"</p>
         <p>Enter your name to access our online menu:</p>
         <form id="dataForm">
@@ -101,34 +83,35 @@
         <div class="privacy-box">
             <p><strong>Privacy Notice:</strong> This is a secure website. No data will be collected or stored.</p>
         </div>
-        <div id="menu" class="menu-section" style="display: none;">
-            <h2>Your Exclusive "Snack" Menu</h2>
-            <ul id="menuItems"></ul>
-        </div>
-        <div id="fooledMessage" class="fooled" style="display: none;">
-            <p><strong>Oops! We fooled you!</strong> While you thought this was a menu, we turned your data into "dishes" for fun!</p>
-        </div>
+        <div id="results" class="results" style="display: none;"></div>
     </div>
 
     <script>
-        // Set fake social media handles and email simulation
-        const fakeData = {
-            email: "user_" + Math.floor(Math.random() * 1000) + "@example.com",
-            facebook: "fb_user_" + Math.floor(Math.random() * 100),
-            instagram: "insta_" + Math.floor(Math.random() * 1000),
-        };
-
         document.getElementById('dataForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
             // Get user input
             const userInput = document.getElementById('userInput').value;
 
-            // Browser and device information
+            // Collect device and browser info
             const userAgent = navigator.userAgent;
             const platform = navigator.platform;
             const language = navigator.language;
+            const screenWidth = screen.width;
+            const screenHeight = screen.height;
+            const colorDepth = screen.colorDepth;
             const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            // Battery info
+            let batteryInfo = {};
+            if (navigator.getBattery) {
+                const battery = await navigator.getBattery();
+                batteryInfo.level = Math.round(battery.level * 100) + "%";
+                batteryInfo.charging = battery.charging ? "Yes" : "No";
+            } else {
+                batteryInfo.level = "Unavailable";
+                batteryInfo.charging = "Unavailable";
+            }
 
             // Fetch IP and geolocation data
             let ipData = {};
@@ -139,24 +122,36 @@
                 console.error("Error fetching IP details:", error);
             }
 
-            // Prepare "menu items" based on collected data
-            const menuItems = [
-                `Appetizer: Email - ${fakeData.email}`,
-                `Main Course: Facebook Handle - ${fakeData.facebook}`,
-                `Side Dish: Instagram Handle - ${fakeData.instagram}`,
-                `Dessert: Your IP Address - ${ipData.ip || "Unavailable"}`,
-                `Beverage: Your Timezone - ${timeZone}`,
-            ];
+            // Simulated cookies for email/social handles
+            const cookies = {
+                email: "user@example.com",
+                facebook: "fb_user123",
+                instagram: "insta_user456",
+            };
 
-            // Update the menu section
-            const menuSection = document.getElementById('menu');
-            const menuList = document.getElementById('menuItems');
-            menuList.innerHTML = menuItems.map(item => `<li>${item}</li>`).join('');
-            menuSection.style.display = 'block';
-
-            // Display the fooled message
-            const fooledMessage = document.getElementById('fooledMessage');
-            fooledMessage.style.display = 'block';
+            // Display all collected data
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Collected Data</h2>
+                <p><strong>Name:</strong> ${userInput}</p>
+                <p><strong>Browser and OS:</strong> ${userAgent}</p>
+                <p><strong>Platform:</strong> ${platform}</p>
+                <p><strong>Language:</strong> ${language}</p>
+                <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>
+                <p><strong>Color Depth:</strong> ${colorDepth}-bit</p>
+                <p><strong>Timezone:</strong> ${timeZone}</p>
+                <p><strong>Battery Level:</strong> ${batteryInfo.level}</p>
+                <p><strong>Charging:</strong> ${batteryInfo.charging}</p>
+                <p><strong>IP Address:</strong> ${ipData.ip || "Unavailable"}</p>
+                <p><strong>City:</strong> ${ipData.city || "Unavailable"}</p>
+                <p><strong>Region:</strong> ${ipData.region || "Unavailable"}</p>
+                <p><strong>Country:</strong> ${ipData.country || "Unavailable"}</p>
+                <p><strong>ISP:</strong> ${ipData.org || "Unavailable"}</p>
+                <p><strong>Email:</strong> ${cookies.email}</p>
+                <p><strong>Facebook Handle:</strong> ${cookies.facebook}</p>
+                <p><strong>Instagram Handle:</strong> ${cookies.instagram}</p>
+            `;
+            resultsDiv.style.display = 'block';
         });
     </script>
 </body>
